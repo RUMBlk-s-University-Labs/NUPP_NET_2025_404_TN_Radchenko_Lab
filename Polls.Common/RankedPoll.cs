@@ -11,15 +11,17 @@ namespace Polls.Common
         {
             BlockInvalidOption(optionId);
 
-            if (Votes.ContainsKey(person))
+            if (!Votes.ContainsKey(person))
             {
-                if (Votes[person].ContainsKey(optionId))
-                {
-                    throw new ArgumentException("Одну опцію можливо обрати тільки раз!");
-                }
-
-                Votes[person].Add(optionId, Options.Count - Votes[person].Count);
+                Votes.Add(person, new Dictionary<Guid, int>());
             }
+
+            if (Votes[person].ContainsKey(optionId))
+            {
+                throw new ArgumentException("Одну опцію можливо обрати тільки раз!");
+            }
+
+            Votes[person].Add(optionId, Options.Count - Votes[person].Count);
         }
 
         //Перевизначений метод
