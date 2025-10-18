@@ -1,0 +1,18 @@
+{
+  "20fcc89f-0f0e-407e-8e45-5898507f6570": {
+    "Id": "20fcc89f-0f0e-407e-8e45-5898507f6570",
+    "Title": "\u041E\u043F\u0438\u0442\u0443\u0432\u0430\u043D\u043D\u044F SVP",
+    "IsOngoing": true,
+    "Options": [
+      {
+        "Id": "c15ed929-96a4-4421-90dc-7cc2e71ae963",
+        "Name": "\u0419\u043E\u0430"
+      },
+      {
+        "Id": "753bc119-efc4-499a-b568-86d0c8d02099",
+        "Name": "LJFD"
+      }
+    ],
+    "prevResult": {}
+  }
+}
