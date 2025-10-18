@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using Polls.Common;
 
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
         //Відстежування подій
         PollTracker.PollCreated += poll =>
@@ -11,9 +12,10 @@ class Program
             Console.WriteLine($"Створено нове опитування: [{poll.Id}]{poll.Title}");
         };
 
-        PollTracker.PollStarted += id =>
+        PollTracker.PollStarted += async id =>
         {
-            Console.WriteLine($"Опитування [{id}]{PollTracker.Read(id)} розпочалося"); //Використання CRUD Read
+            var poll = await PollTracker.Read(id);
+            Console.WriteLine($"Опитування [{id}]{poll.Title} розпочалося"); //Використання CRUD Read
         };
 
         //Вивід результатів завершених опитувань
@@ -29,49 +31,33 @@ class Program
             }
         };
 
-        var SVP = new SingleVotePoll("Опитування SVP"); //Створення нового опитування | CRUD Create через виклик методу PollTracker.RegisterPoll() в конструкторі
-        var Option1 = new Option("Йоа"); //Створення опцій
-        var Option2 = new Option("LJFD");
-
-        SVP
-            .AddOption(Option1) //прикріплення опцій
-            .AddOption(Option2)
-            .Start(); //Розпочаток опитування
-
-        var Person1 = new Person("Іван"); //Створення нових персон
-        var Person2 = new Person("Петя");
-        var Person3 = new Person("Вася");
-
-        SVP.Vote(Person1, Option1.Id); //Голосування новими персонами
-        SVP.Vote(Person2, Option2.Id);
-        SVP.Vote(Person3, Option1.Id);
-
-        Console.WriteLine("Список опитувань:");
-        foreach (var poll in PollTracker.ReadAll()) //CRUD ReadAll
+        var persons = new ConcurrentBag<Person>();
+        Parallel.For(0, 1000, i =>
         {
-            Console.WriteLine($"[{poll.Id}]{poll.Title}");
-        }
+            persons.Add(Person.CreateNew());
+        });
 
-        PollTracker.Save("polls.json"); //CRUD Save
-        SVP.Finish(); //CRUD Remove через виклик PollTracker.UnregisterPoll() в даному методі
-        PollTracker.Load("polls.json"); //CRUD Load
-
-        Console.WriteLine("Список опитувань після відновлення:"); //Опитування після закінчення виключаються з PollTracker
-        foreach (var poll in PollTracker.ReadAll()) //CRUD ReadAll
+        var rand = new Random();
+        FinishedPollProcessor.StartProcessing();
+        Parallel.For(0, 1000, i =>
         {
-            Console.WriteLine($"[{poll.Id}]{poll.Title}");
-        }
+            var poll = Poll.CreateNew<RankedPoll>();
+        });
 
-        var RP = new RankedPoll("Опитування RP");
-        RP
-            .AddOption(Option1) //прикріплення опцій
-            .AddOption(Option2)
-            .Start(); //Розпочаток опитування
-        RP.Vote(Person1, Option1.Id); //Голосування новими персонами
-        RP.Vote(Person1, Option2.Id);
-        RP.Vote(Person2, Option2.Id);
-        RP.Vote(Person2, Option1.Id);
-        RP.Vote(Person3, Option1.Id);
-        RP.Finish();
+        PollTracker.Save();
+
+        var polls = await PollTracker.ReadAll();
+
+        Parallel.ForEach(polls, poll =>
+        {
+            poll.Start();
+            var options = poll.GetOptions();
+            Parallel.For(0, rand.Next(100, 500), j =>
+            {
+                try { poll.Vote(persons.ElementAt(rand.Next(0, persons.Count)), options.ElementAt(rand.Next(0, options.Count)).Id); } catch { }
+            });
+            poll.Finish();
+        });
+        FinishedPollProcessor.PrintStatistics();
     }
 }

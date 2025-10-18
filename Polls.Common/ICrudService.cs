@@ -11,11 +11,6 @@ namespace Polls.Common
         public void Remove(T element);
     }
 
-    public interface IIdentifiable
-    {
-        Guid Id { get; }
-    }
-
     public class GenericCrudService<T> : ICrudService<T> where T : IIdentifiable
     {
         private Dictionary<Guid, T> storage = new();
@@ -46,6 +41,7 @@ namespace Polls.Common
             {
                 throw new KeyNotFoundException($"Елемент {element.Id} не знайдено");
             }
+            storage[element.Id] = element;
         }
 
         public void Remove(T element)

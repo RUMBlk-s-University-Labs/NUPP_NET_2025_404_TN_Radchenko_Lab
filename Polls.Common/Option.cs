@@ -42,5 +42,10 @@ namespace Polls.Common
         }
 
         public override int GetHashCode() => Id.GetHashCode();
+
+        public static Option CreateNew()
+        {
+            return new Option(RandomNames.RandomString.Get(12));
+        }
     }
 }
