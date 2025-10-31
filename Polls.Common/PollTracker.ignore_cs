@@ -20,7 +20,7 @@ namespace Polls.Common
         //Статичний конструктор
         static PollTracker()
         {
-            polls = new GenericCrudServiceAsync<Poll>();
+            polls = new GenericCrudServiceAsync<IRepository<Poll>>();
         }
 
         //Статичний метод

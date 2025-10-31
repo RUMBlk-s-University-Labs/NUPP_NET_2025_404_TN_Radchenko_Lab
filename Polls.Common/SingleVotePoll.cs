@@ -1,10 +1,14 @@
+using System.Collections.Concurrent;
+
 namespace Polls.Common
 {
     public class SingleVotePoll : Poll
     {
-        private Dictionary<Person, Guid> Votes = new Dictionary<Person, Guid>();
+        private ConcurrentDictionary<Person, Guid> Votes = new ConcurrentDictionary<Person, Guid>();
 
         public SingleVotePoll(string title) : base(title) { }
+        public SingleVotePoll(Guid id, string title, HashSet<Option> options, bool isOngoing, Dictionary<Guid, int> prev_result, Dictionary<Person, Guid> votes)
+            : base(id, title, options, isOngoing, prev_result) { }
         //Перевизначений метод
         public override void Vote(Person person, Guid optionId)
         {
@@ -12,7 +16,7 @@ namespace Polls.Common
 
             try
             {
-                Votes.Add(person, optionId);
+                Votes.TryAdd(person, optionId);
             }
             catch
             {
@@ -37,6 +41,11 @@ namespace Polls.Common
             prevResult = result;
             AnnounceFinish();
             return result;
+        }
+
+        public ConcurrentDictionary<Person, Guid> GetVotes()
+        {
+            return Votes;
         }
     }
 }

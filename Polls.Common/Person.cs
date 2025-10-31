@@ -5,6 +5,12 @@ namespace Polls.Common
         public Guid Id { get; } = Guid.NewGuid();
         public string Name { get; }
 
+        public Person(Guid id, string name)
+        {
+            Name = name;
+            Id = id;
+        }
+
         //Конструктор
         public Person(string name)
         {
