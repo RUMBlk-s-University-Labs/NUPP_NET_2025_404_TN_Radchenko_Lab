@@ -87,7 +87,6 @@ namespace Polls.Infrastructure.Repositories
         {
             return _dbSet
                 .Where(p => !(p is SingleVotePollModel) && !(p is RankedPollModel))
-                .AsNoTracking()
                 .Include(p => p.Options)
                 .Include(p => p.Iteration)
                     .ThenInclude(i => i.Votes)

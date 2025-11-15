@@ -86,7 +86,6 @@ namespace Polls.Infrastructure.Repositories
         private IQueryable<SingleVotePollModel> GetBaseQuery()
         {
             return _dbSet
-                .AsNoTracking()
                 .Include(p => p.Options)
                 .Include(p => p.Status)
                 .Include(p => p.Iteration)
@@ -145,7 +144,7 @@ namespace Polls.Infrastructure.Repositories
                 model = new SingleVotePollModel { Id = entity.Id };
             }
 
-            model.Status = new PollStatusModel();
+            model.Status ??= new PollStatusModel();
             model.Status.IsOngoing = entity.IsOngoing;
             model.Title = entity.Title;
             

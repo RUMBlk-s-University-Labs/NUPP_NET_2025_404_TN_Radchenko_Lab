@@ -152,8 +152,9 @@ namespace Polls.Infrastructure.Repositories
                 model = new RankedPollModel { Id = entity.Id };
             }
 
-            model.Status = new PollStatusModel();
+            model.Status ??= new PollStatusModel();
             model.Status.IsOngoing = entity.IsOngoing;
+            Console.WriteLine(model.Status.IsOngoing);
             model.Title = entity.Title;
             
             var options = entity.GetOptions();
@@ -202,7 +203,7 @@ namespace Polls.Infrastructure.Repositories
                     }
                 }
             }
-            
+            Console.WriteLine(model.Status.IsOngoing);
             return model;
         }
     }
