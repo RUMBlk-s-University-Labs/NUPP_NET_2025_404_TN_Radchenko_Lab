@@ -34,29 +34,25 @@ namespace Polls.Infrastructure
             modelBuilder.Entity<VoteModel>()
                 .HasOne(v => v.Person)
                 .WithMany(p => p.Votes)
-                .HasForeignKey(v => v.PersonId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(v => v.PersonId);
 
             // Один-до-одного
             modelBuilder.Entity<PollModel>()
                 .HasOne(p => p.Status)
                 .WithOne(s => s.Poll)
-                .HasForeignKey<PollStatusModel>(s => s.PollId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey<PollStatusModel>(s => s.PollId);
 
             // Один-до-одного
             modelBuilder.Entity<PollModel>()
                 .HasOne(p => p.Iteration)
                 .WithOne(i => i.Poll)
-                .HasForeignKey<IterationModel>(i => i.PollId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey<IterationModel>(i => i.PollId);
 
             // Один-до-багатьох
             modelBuilder.Entity<VoteModel>()
                 .HasOne(v => v.Iteration)
                 .WithMany(i => i.Votes)
-                .HasForeignKey(i => i.IterationId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(i => i.IterationId);
         }
     }
 }

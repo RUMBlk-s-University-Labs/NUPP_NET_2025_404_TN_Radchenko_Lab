@@ -33,7 +33,7 @@ namespace Polls.Infrastructure.Repositories
 
         public async Task<IEnumerable<SingleVotePoll>> GetAllAsync()
         {
-            var pollModels = await GetBaseQuery().ToListAsync();
+            var pollModels = await GetBaseQuery().AsNoTracking().ToListAsync();
             var tasks = pollModels.Select(async model => (SingleVotePoll)await MapToCommon(model));
             return await Task.WhenAll(tasks);
         }
@@ -41,6 +41,7 @@ namespace Polls.Infrastructure.Repositories
         public async Task<IEnumerable<SingleVotePoll>> GetPagedAsync(int page, int amount)
         {
             var pollModels = await GetBaseQuery()
+                .AsNoTracking()
                 .Skip((page - 1) * amount)
                 .Take(amount)
                 .ToListAsync();
@@ -67,6 +68,8 @@ namespace Polls.Infrastructure.Repositories
             {
                 await MapToModel(entity, model);
             }
+
+            await SaveChangesAsync();
         }
 
         public async Task DeleteAsync(SingleVotePoll entity)
@@ -109,7 +112,10 @@ namespace Polls.Infrastructure.Repositories
                 {
                     foreach (var voteModel in model.Iteration.Votes)
                     {
-                        var person = await _personRepository.GetByIdAsync(voteModel.PersonId);
+                        var personId = voteModel.PersonId ?? Guid.Empty;
+                        if (personId == Guid.Empty) continue;
+
+                        var person = await _personRepository.GetByIdAsync(personId);
                         if (person != null) votes[person] = voteModel.OptionId;
                     }
                 }
@@ -167,28 +173,11 @@ namespace Polls.Infrastructure.Repositories
                 {
                     model.Iteration.Votes.Add(new VoteModel
                     {
-                        Id = Guid.NewGuid(), PollId = model.Id, IterationId = model.Iteration.Id,
+                        PollId = model.Id, IterationId = model.Iteration.Id,
                         PersonId = vote.Key.Id,
                         OptionId = vote.Value,
                         weight = 1
                     });
-                }
-            }
-            else
-            {
-                var prevResultDict = entity.PrevResult();
-                if (prevResultDict.Any())
-                {
-                    foreach (var resultEntry in prevResultDict)
-                    {
-                        model.Iteration.Votes.Add(new VoteModel
-                        {
-                            Id = Guid.NewGuid(), PollId = model.Id, IterationId = model.Iteration.Id,
-                            OptionId = resultEntry.Key,
-                            weight = resultEntry.Value,
-                            PersonId = Guid.Empty 
-                        });
-                    }
                 }
             }
             

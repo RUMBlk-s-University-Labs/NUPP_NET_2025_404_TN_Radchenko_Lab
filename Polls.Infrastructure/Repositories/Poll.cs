@@ -67,6 +67,8 @@ namespace Polls.Infrastructure.Repositories
             {
                 await MapToModel(entity, model);
             }
+
+            await SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Poll entity)
@@ -153,7 +155,7 @@ namespace Polls.Infrastructure.Repositories
                     {
                         model.Iteration.Votes.Add(new VoteModel
                         {
-                            Id = Guid.NewGuid(), PollId = model.Id, IterationId = model.Iteration.Id,
+                            PollId = model.Id, IterationId = model.Iteration.Id,
                             OptionId = resultEntry.Key,
                             weight = resultEntry.Value,
                             PersonId = Guid.Empty

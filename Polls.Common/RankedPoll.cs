@@ -9,7 +9,17 @@ namespace Polls.Common
         public RankedPoll() {}
         public RankedPoll(string title) : base(title) { }
         public RankedPoll(Guid id, string title, HashSet<Option> options, bool isOngoing, Dictionary<Guid, int> prev_result, Dictionary<Person, Dictionary<Guid, int>> votes)
-            : base(id, title, options, isOngoing, prev_result) { }
+            : base(id, title, options, isOngoing, prev_result)
+        {
+            var cVotes = votes.Select(o => 
+            new KeyValuePair<Person, ConcurrentDictionary<Guid, int>>(
+                o.Key,
+                new ConcurrentDictionary<Guid, int>(o.Value)
+                )
+            );
+        
+            Votes = new ConcurrentDictionary<Person, ConcurrentDictionary<Guid, int>>(cVotes);
+        }
 
         //Перевизначений метод
         public override void Vote(Person person, Guid optionId)
@@ -32,6 +42,8 @@ namespace Polls.Common
         //Перевизначений метод
         public override Dictionary<Guid, int> Finish()
         {
+            if (!IsOngoing) { throw new ArgumentException("Опитування не розпочате!"); }
+
             var result = new Dictionary<Guid, int>();
 
             foreach (var Option in GetOptions())

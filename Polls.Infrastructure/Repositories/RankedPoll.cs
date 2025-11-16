@@ -34,7 +34,7 @@ namespace Polls.Infrastructure.Repositories
 
         public async Task<IEnumerable<RankedPoll>> GetAllAsync()
         {
-            var pollModels = await GetBaseQuery().Include(p => p.Options).Include(p => p.Status).ToListAsync();
+            var pollModels = await GetBaseQuery().AsNoTracking().Include(p => p.Options).Include(p => p.Status).ToListAsync();
             var tasks = pollModels.Select(async model => (RankedPoll) await MapToCommon(model));
             return await Task.WhenAll(tasks);
         }
@@ -42,6 +42,7 @@ namespace Polls.Infrastructure.Repositories
         public async Task<IEnumerable<RankedPoll>> GetPagedAsync(int page, int amount)
         {
             var pollModels = await GetBaseQuery()
+                .AsNoTracking()
                 .Include(p => p.Status)
                 .Include(p => p.Options)
                 .Skip((page - 1) * amount)
@@ -70,6 +71,8 @@ namespace Polls.Infrastructure.Repositories
             {
                 await MapToModel(entity, model);
             }
+
+            await SaveChangesAsync(); 
         }
 
         public async Task DeleteAsync(RankedPoll entity)
@@ -89,7 +92,6 @@ namespace Polls.Infrastructure.Repositories
         private IQueryable<RankedPollModel> GetBaseQuery()
         {
             return _dbSet
-                .AsNoTracking()
                 .Include(p => p.Options)
                 .Include(p => p.Status)
                 .Include(p => p.Iteration)
@@ -114,7 +116,9 @@ namespace Polls.Infrastructure.Repositories
                     var groups = model.Iteration.Votes.GroupBy(v => v.PersonId);
                     foreach (var group in groups)
                     {
-                        var person = await _personRepository.GetByIdAsync(group.Key);
+                        var personId = group.Key ?? Guid.Empty;
+                        if (personId == Guid.Empty) continue;
+                        var person = await _personRepository.GetByIdAsync(personId);
                         if (person != null)
                         {
                             votes[person] = group.ToDictionary(v => v.OptionId, v => v.weight);
@@ -154,7 +158,6 @@ namespace Polls.Infrastructure.Repositories
 
             model.Status ??= new PollStatusModel();
             model.Status.IsOngoing = entity.IsOngoing;
-            Console.WriteLine(model.Status.IsOngoing);
             model.Title = entity.Title;
             
             var options = entity.GetOptions();
@@ -163,22 +166,18 @@ namespace Polls.Infrastructure.Repositories
 
             if (model.Iteration == null)
                 model.Iteration = new IterationModel { Id = Guid.NewGuid(), PollId = model.Id };
-            else
-            {
-                _context.Votes.RemoveRange(model.Iteration.Votes);
-                model.Iteration.Votes.Clear(); 
-            }
 
             if (entity.IsOngoing)
             {
                 var votesDict = entity.GetVotes();
+                model.Iteration.Votes.Clear();
                 foreach (var personVotes in votesDict)
                 {
                     foreach (var rank in personVotes.Value)
                     {
                         model.Iteration.Votes.Add(new VoteModel
                         {
-                            Id = Guid.NewGuid(), PollId = model.Id, IterationId = model.Iteration.Id,
+                            PollId = model.Id, IterationId = model.Iteration.Id,
                             PersonId = personVotes.Key.Id,
                             OptionId = rank.Key,
                             weight = rank.Value
@@ -186,24 +185,7 @@ namespace Polls.Infrastructure.Repositories
                     }
                 }
             }
-            else
-            {
-                var prevResultDict = entity.PrevResult();
-                if (prevResultDict.Any())
-                {
-                    foreach (var resultEntry in prevResultDict)
-                    {
-                        model.Iteration.Votes.Add(new VoteModel
-                        {
-                            Id = Guid.NewGuid(), PollId = model.Id, IterationId = model.Iteration.Id,
-                            OptionId = resultEntry.Key,
-                            weight = resultEntry.Value,
-                            PersonId = Guid.Empty 
-                        });
-                    }
-                }
-            }
-            Console.WriteLine(model.Status.IsOngoing);
+            
             return model;
         }
     }

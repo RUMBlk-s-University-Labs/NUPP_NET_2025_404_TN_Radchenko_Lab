@@ -135,7 +135,7 @@ namespace Polls.Infrastructure.Migrations
                     b.Property<Guid>("OptionId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PersonId")
+                    b.Property<Guid?>("PersonId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PollId")
@@ -191,7 +191,7 @@ namespace Polls.Infrastructure.Migrations
                     b.HasOne("Polls.Infrastructure.Models.PollModel", "Poll")
                         .WithOne("Iteration")
                         .HasForeignKey("Polls.Infrastructure.Models.IterationModel", "PollId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Poll");
@@ -209,7 +209,7 @@ namespace Polls.Infrastructure.Migrations
                     b.HasOne("Polls.Infrastructure.Models.PollModel", "Poll")
                         .WithOne("Status")
                         .HasForeignKey("Polls.Infrastructure.Models.PollStatusModel", "PollId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Poll");
@@ -220,7 +220,7 @@ namespace Polls.Infrastructure.Migrations
                     b.HasOne("Polls.Infrastructure.Models.IterationModel", "Iteration")
                         .WithMany("Votes")
                         .HasForeignKey("IterationId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Polls.Infrastructure.Models.OptionModel", "Option")
@@ -231,9 +231,7 @@ namespace Polls.Infrastructure.Migrations
 
                     b.HasOne("Polls.Infrastructure.Models.PersonModel", "Person")
                         .WithMany("Votes")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("PersonId");
 
                     b.HasOne("Polls.Infrastructure.Models.PollModel", "Poll")
                         .WithMany()

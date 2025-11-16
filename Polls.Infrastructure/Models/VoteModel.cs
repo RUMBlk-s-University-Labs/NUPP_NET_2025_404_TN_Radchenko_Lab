@@ -4,7 +4,7 @@ public class VoteModel : IIdentifiableModel
 {
     public Guid PollId { get; set; }
     public PollModel? Poll { get; set; }
-    public Guid PersonId { get; set; }
+    public Guid? PersonId { get; set; }
     public PersonModel? Person {get; set;}
     public Guid OptionId { get; set; }
     public OptionModel? Option { get; set; }
