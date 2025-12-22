@@ -69,8 +69,9 @@ namespace Polls.Common
                 await _repository.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }

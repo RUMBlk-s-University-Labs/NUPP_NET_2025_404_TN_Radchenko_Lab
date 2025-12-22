@@ -8,7 +8,10 @@ namespace Polls.Common
 
         public SingleVotePoll(string title) : base(title) { }
         public SingleVotePoll(Guid id, string title, HashSet<Option> options, bool isOngoing, Dictionary<Guid, int> prev_result, Dictionary<Person, Guid> votes)
-            : base(id, title, options, isOngoing, prev_result) { }
+            : base(id, title, options, isOngoing, prev_result)
+        {
+            Votes = new ConcurrentDictionary<Person, Guid>(votes);
+        }
         //Перевизначений метод
         public override void Vote(Person person, Guid optionId)
         {
@@ -26,6 +29,7 @@ namespace Polls.Common
         //Перевизначений метод
         public override Dictionary<Guid, int> Finish()
         {
+            if (!IsOngoing) { throw new ArgumentException("Опитування не розпочате!"); }
             var result = new Dictionary<Guid, int>();
 
             foreach (var Option in GetOptions())

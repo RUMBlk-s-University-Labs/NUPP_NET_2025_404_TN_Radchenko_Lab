@@ -22,6 +22,10 @@ namespace Polls.Common
             Options = options;
             IsOngoing = isOngoing;
             prevResult = prev_result;
+
+            if (IsOngoing) {
+                PollConcurrencyLimiter.Enter();
+            }
         }
 
         //Конструктор

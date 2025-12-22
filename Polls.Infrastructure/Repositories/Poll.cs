@@ -67,6 +67,8 @@ namespace Polls.Infrastructure.Repositories
             {
                 await MapToModel(entity, model);
             }
+
+            await SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Poll entity)
@@ -87,7 +89,6 @@ namespace Polls.Infrastructure.Repositories
         {
             return _dbSet
                 .Where(p => !(p is SingleVotePollModel) && !(p is RankedPollModel))
-                .AsNoTracking()
                 .Include(p => p.Options)
                 .Include(p => p.Iteration)
                     .ThenInclude(i => i.Votes)
@@ -154,7 +155,7 @@ namespace Polls.Infrastructure.Repositories
                     {
                         model.Iteration.Votes.Add(new VoteModel
                         {
-                            Id = Guid.NewGuid(), PollId = model.Id, IterationId = model.Iteration.Id,
+                            PollId = model.Id, IterationId = model.Iteration.Id,
                             OptionId = resultEntry.Key,
                             weight = resultEntry.Value,
                             PersonId = Guid.Empty
