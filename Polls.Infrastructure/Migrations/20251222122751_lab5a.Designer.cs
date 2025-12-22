@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Polls.Infrastructure;
@@ -11,9 +12,11 @@ using Polls.Infrastructure;
 namespace Polls.Infrastructure.Migrations
 {
     [DbContext(typeof(PollsContext))]
-    partial class PollsContextModelSnapshot : ModelSnapshot
+    [Migration("20251222122751_lab5a")]
+    partial class lab5a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Polls.Infrastructure.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Polls.Infrastructure
 {
-    public class PollsContext : DbContext
+    public class PollsContext : IdentityDbContext<PersonModel, IdentityRole<Guid>, Guid>
     {
         public DbSet<PersonModel> Persons { get; set; }
         public DbSet<OptionModel> Options { get; set; }

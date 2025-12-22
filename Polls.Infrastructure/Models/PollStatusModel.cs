@@ -4,6 +4,7 @@ namespace Polls.Infrastructure.Models;
 
 public class PollStatusModel : IIdentifiableModel
 {
+    public Guid Id { get; set; }
     public Guid PollId { get; set; }
     public PollModel? Poll { get; set; }
     public bool IsOngoing { get; set; } = false;

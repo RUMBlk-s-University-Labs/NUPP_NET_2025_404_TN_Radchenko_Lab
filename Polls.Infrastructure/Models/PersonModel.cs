@@ -1,5 +1,7 @@
 namespace Polls.Infrastructure.Models;
-public class PersonModel : IIdentifiableModel
+using Microsoft.AspNetCore.Identity;
+
+public class PersonModel : IdentityUser<Guid>, IIdentifiableModel
 {
     public string? Name { get; set; }
     public ICollection<VoteModel> Votes { get; set; } = new List<VoteModel>();

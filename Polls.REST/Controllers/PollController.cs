@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Polls.REST.Controllers
 {
@@ -55,6 +57,7 @@ namespace Polls.REST.Controllers
             return Ok(poll.GetOptions());
         }
 
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -83,6 +86,7 @@ namespace Polls.REST.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -96,6 +100,7 @@ namespace Polls.REST.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,Moderators")]
         [HttpPost("{id}/start")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status304NotModified)]
@@ -122,6 +127,7 @@ namespace Polls.REST.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,Moderator")]
         [HttpPost("{id}/finish")]
         [ProducesResponseType(StatusCodes.Status304NotModified)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -138,6 +144,7 @@ namespace Polls.REST.Controllers
             return success ? Ok(result) : StatusCode(StatusCodes.Status304NotModified);
         }
 
+        [Authorize]
         [HttpPost("{id}/vote")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
