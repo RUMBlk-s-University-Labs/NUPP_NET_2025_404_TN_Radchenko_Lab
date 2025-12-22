@@ -2,6 +2,7 @@ namespace Polls.Infrastructure.Models;
 
 public class IterationModel : IIdentifiableModel
 {
+    public Guid Id { get; set; }
     public Guid PollId { get; set; }
     public PollModel? Poll {get; set;}
     public ICollection<OptionModel> Options { get; set; } = new List<OptionModel>();
