@@ -1,9 +1,11 @@
+using System.Runtime.InteropServices.Swift;
+
 namespace Polls.Common
 {
     public class RankedPoll : Poll
     {
         private Dictionary<Person, Dictionary<Guid, int>> Votes = new Dictionary<Person, Dictionary<Guid, int>>();
-
+        public RankedPoll() {}
         public RankedPoll(string title) : base(title) { }
 
         //Перевизначений метод
@@ -42,7 +44,7 @@ namespace Polls.Common
                 }
             }
             prevResult = result;
-            AnnounceFinish();
+            base.Finish();
             return result;
         }
     }

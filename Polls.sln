@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.Common", "Polls.Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.Console", "Polls.Console\Polls.Console.csproj", "{8A7486C7-A4D5-4067-9DC0-0685FDFC4E83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.RandomNames", "Polls.RandomNames\Polls.RandomNames.csproj", "{3A3EC2E2-7B8C-4BC4-9FAC-E636D534AE37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.Tests", "Polls.Tests\Polls.Tests.csproj", "{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{8A7486C7-A4D5-4067-9DC0-0685FDFC4E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A7486C7-A4D5-4067-9DC0-0685FDFC4E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A7486C7-A4D5-4067-9DC0-0685FDFC4E83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A3EC2E2-7B8C-4BC4-9FAC-E636D534AE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A3EC2E2-7B8C-4BC4-9FAC-E636D534AE37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A3EC2E2-7B8C-4BC4-9FAC-E636D534AE37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A3EC2E2-7B8C-4BC4-9FAC-E636D534AE37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

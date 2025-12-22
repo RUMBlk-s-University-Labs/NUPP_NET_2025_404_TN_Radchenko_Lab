@@ -1,11 +1,12 @@
 using System.ComponentModel.Design;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Polls.Common
 {
     public static class PollTracker //Статичний клас
     {
-        private static readonly GenericCrudService<Poll> polls; //Статичне поле
+        private static readonly GenericCrudServiceAsync<Poll> polls; //Статичне поле
 
         public delegate void PollCreatedHandler(Poll poll); //Делегат
         public static event PollCreatedHandler? PollCreated; //Подія
@@ -19,29 +20,29 @@ namespace Polls.Common
         //Статичний конструктор
         static PollTracker()
         {
-            polls = new GenericCrudService<Poll>();
+            polls = new GenericCrudServiceAsync<Poll>();
         }
 
         //Статичний метод
-        public static Poll Read(Guid id)
+        public async static Task<Poll> Read(Guid id)
         {
-            return polls.Read(id);
+            return await polls.ReadAsync(id);
         }
         //Статичний метод
-        public static IEnumerable<Poll> ReadAll()
+        public static async Task<IEnumerable<Poll>> ReadAll()
         {
-            return polls.ReadAll();
+            return await polls.ReadAllAsync();
         }
         //Статичний метод
         public static void RegisterPoll(Poll poll)
         {
-            polls.Create(poll);
+            polls.CreateAsync(poll);
             PollCreated?.Invoke(poll);
         }
         //Статичний метод
         public static void UnregisterPoll(Poll poll)
         {
-            polls.Remove(poll);
+            polls.RemoveAsync(poll);
             PollFinished?.Invoke(poll);
         }
         //Статичний метод
@@ -55,14 +56,14 @@ namespace Polls.Common
             return poll.GetOptions().Count();
         }
         //Статичний метод
-        public static void Save(string FilePath)
+        public static void Save()
         {
-            polls.Save(FilePath);
+            polls.SaveAsync();
         }
         //Статичний метод
-        public static void Load(string FilePath)
+        /*public static void Load(string FilePath)
         {
             polls.Load(FilePath);
-        }
+        }*/
     }
 }
