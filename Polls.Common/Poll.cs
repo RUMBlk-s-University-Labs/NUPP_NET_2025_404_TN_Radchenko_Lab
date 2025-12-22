@@ -15,6 +15,19 @@ namespace Polls.Common
 
         public Poll() { Title = "ToBeSetted"; }
 
+        public Poll(Guid id, string title, HashSet<Option> options, bool isOngoing, Dictionary<Guid, int> prev_result)
+        {
+            Id = id;
+            Title = title;
+            Options = options;
+            IsOngoing = isOngoing;
+            prevResult = prev_result;
+
+            if (IsOngoing) {
+                PollConcurrencyLimiter.Enter();
+            }
+        }
+
         //Конструктор
         public Poll(string title)
         {
@@ -24,7 +37,7 @@ namespace Polls.Common
             }
             Title = title;
 
-            PollTracker.RegisterPoll(this);
+            //PollTracker.RegisterPoll(this);
         }
 
         //Метод
@@ -77,7 +90,7 @@ namespace Polls.Common
             }
             PollConcurrencyLimiter.Enter();
             IsOngoing = true;
-            PollTracker.PollStartedInvoke(this);
+            //PollTracker.PollStartedInvoke(this);
             return this;
         }
 
@@ -85,7 +98,7 @@ namespace Polls.Common
         protected void AnnounceFinish()
         {
             IsOngoing = false;
-            PollTracker.UnregisterPoll(this);
+            //PollTracker.UnregisterPoll(this);
             PollConcurrencyLimiter.Exit();
             FinishedPollProcessor.AddPollToQueue(this);
         }
@@ -121,7 +134,7 @@ namespace Polls.Common
             {
                 poll.AddOption(Option.CreateNew());
             }
-            PollTracker.RegisterPoll(poll);
+            //PollTracker.RegisterPoll(poll);
             return poll;
         }
 
@@ -166,7 +179,7 @@ namespace Polls.Common
                                 _allVoteCounts.Add(num);
                             }
                         }
-                        PollTracker.UnregisterPoll(poll);
+                        //PollTracker.UnregisterPoll(poll);
                     }
                     }
             });

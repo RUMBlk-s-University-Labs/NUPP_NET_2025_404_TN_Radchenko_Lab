@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.RandomNames", "Polls.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.Tests", "Polls.Tests\Polls.Tests.csproj", "{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Polls.Infrastructure", "Polls.Infrastructure\Polls.Infrastructure.csproj", "{0F7447F9-B2E2-4D3E-BCEA-AAB7A7EBFE0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,13 @@ Global
 		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{175B4FD2-AF5B-493D-A990-A1B42FBEFEBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F7447F9-B2E2-4D3E-BCEA-AAB7A7EBFE0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F7447F9-B2E2-4D3E-BCEA-AAB7A7EBFE0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F7447F9-B2E2-4D3E-BCEA-AAB7A7EBFE0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F7447F9-B2E2-4D3E-BCEA-AAB7A7EBFE0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EAD3793-955A-41BC-9139-E11C1A29F593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EAD3793-955A-41BC-9139-E11C1A29F593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EAD3793-955A-41BC-9139-E11C1A29F593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EAD3793-955A-41BC-9139-E11C1A29F593}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

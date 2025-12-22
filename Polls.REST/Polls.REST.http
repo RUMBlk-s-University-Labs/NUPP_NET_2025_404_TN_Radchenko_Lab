@@ -1,0 +1,6 @@
+@Polls.REST_HostAddress = http://localhost:5221
+
+GET {{Polls.REST_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

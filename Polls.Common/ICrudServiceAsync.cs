@@ -1,9 +1,14 @@
-using System.Text.Json;
+using System;
 using System.Collections;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
 namespace Polls.Common
 {
-    public interface ICrudServiceAsync<T> : IEnumerable<T>
+    public interface ICrudServiceAsync<T>
     {
         public Task<bool> CreateAsync(T element);
         public Task<T> ReadAsync(Guid id);
@@ -14,78 +19,88 @@ namespace Polls.Common
         public Task<bool> SaveAsync();
     }
 
-    public class GenericCrudServiceAsync<T> : ICrudServiceAsync<T> where T : IIdentifiable
+    public class GenericCrudServiceAsync<T> : ICrudServiceAsync<T> where T : class, IIdentifiable
     {
-        private ConcurrentDictionary<Guid, T> storage = new();
-
-        private readonly object _createLock = new object();
-        public Task<bool> CreateAsync(T element)
+        private readonly IRepository<T> _repository;
+        public GenericCrudServiceAsync(IRepository<T> repository)
         {
-            lock (_createLock) {
-                var result = storage.TryAdd(element.Id, element);
-                return Task.FromResult(result);
+            _repository = repository;
+        }
+
+        public async Task<bool> CreateAsync(T element)
+        {
+            try
+            {
+                await _repository.AddAsync(element);
+                await _repository.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
-        public Task<T> ReadAsync(Guid id)
+        public async Task<T> ReadAsync(Guid id)
         {
-            if (!storage.TryGetValue(id, out var element))
+            var element = await _repository.GetByIdAsync(id);
+            if (element == null)
             {
                 throw new KeyNotFoundException($"Елемент {id} не знайдено");
             }
-            return Task.FromResult(element);
+            return element;
         }
 
-        public Task<IEnumerable<T>> ReadAllAsync()
+        public async Task<IEnumerable<T>> ReadAllAsync()
         {
-            return Task.FromResult(storage.Values.AsEnumerable());
+            return await _repository.GetAllAsync();
         }
-        public Task<IEnumerable<T>> ReadAllAsync(int page, int amount)
+        
+        public async Task<IEnumerable<T>> ReadAllAsync(int page, int amount)
         {
-            var result = storage.Values.Skip((page - 1) * amount).Take(amount);
-            return Task.FromResult(result);
+            return await _repository.GetPagedAsync(page, amount);
         }
 
-        private readonly object _updateLock = new object();
-        public Task<bool> UpdateAsync(T element)
+        public async Task<bool> UpdateAsync(T element)
         {
-            lock (_updateLock)
+            try
             {
-                if (!storage.ContainsKey(element.Id))
-                {
-                    throw new KeyNotFoundException($"Елемент {element.Id} не знайдено");
-                }
-                storage[element.Id] = element;
-                return Task.FromResult(true);
+                await _repository.UpdateAsync(element);
+                await _repository.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
 
-        public Task<bool> RemoveAsync(T element)
+        public async Task<bool> RemoveAsync(T element)
         {
-            return Task.FromResult(storage.TryRemove(element.Id, out _));
-        }
-
-        public Task<bool> SaveAsync()
-        {
-            var FilePath = "polls.json";
-            var options = new JsonSerializerOptions
+            try
             {
-                WriteIndented = true,
-                IncludeFields = true
-            };
-            var json = JsonSerializer.Serialize(storage, options);
-            File.WriteAllTextAsync(FilePath, json);
-            return Task.FromResult(true);
+                await _repository.DeleteAsync(element);
+                await _repository.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public async Task<bool> SaveAsync()
         {
-            return storage.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            try
+            {
+                await _repository.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
