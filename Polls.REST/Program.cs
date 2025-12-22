@@ -63,7 +63,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddControllers();
-
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
 app.MapGroup("/identity").MapIdentityApi<PersonModel>();
@@ -124,6 +125,4 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseHttpsRedirection();
-
 app.Run();
